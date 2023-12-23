@@ -1,12 +1,12 @@
-from dumbo_runlim.domain.resources import Resources, RealtimeUsage
+from dumbo_runlim.domain.resources import Usage, Resource, Limit
 
 
 def test_resources_exceed():
-    resources = Resources(
-        realtime=RealtimeUsage(10),
+    usage = Usage(
+        time=Resource(10),
+        system=Resource(1),
     )
-    limit = Resources(
-        realtime=RealtimeUsage(5),
+    limit = Limit(
+        time=Resource(10),
     )
-    assert resources.exceed_limit(limit)
-    assert not limit.exceed_limit(resources)
+    assert usage.exceed_limit(limit)
