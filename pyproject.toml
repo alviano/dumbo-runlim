@@ -8,6 +8,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.11"
 dumbo-utils = "^0.1.9"
+psutil = "^5.9.7"
 
 
 [tool.poetry.group.dev.dependencies]
