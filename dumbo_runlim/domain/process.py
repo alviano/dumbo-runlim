@@ -7,6 +7,7 @@ import time
 from typing import Callable
 
 import psutil
+from dumbo_utils.primitives import bounded_string
 from dumbo_utils.validation import validate
 
 from dumbo_runlim.domain.resources import Limit, UsageSummary
@@ -30,10 +31,16 @@ class CPUAffinity:
         return tuple(psutil.Process(os.getpid()).cpu_affinity())
 
 
+@bounded_string(min_length=0, max_length=16, pattern=r'[A-Za-z0-9 _-]+')
+class Tag:
+    def __str__(self):
+        return "{tag:{width}}".format(tag=self.value, width=self.max_length())
+
+
 @dataclasses.dataclass(frozen=True)
 class Process:
     command: str
-    tag: str = dataclasses.field(default='')
+    tag: Tag = dataclasses.field(default=Tag("UNTAGGED"))
     cpu_affinity: CPUAffinity = dataclasses.field(default=CPUAffinity())
     cpu_nice: int = dataclasses.field(default=20)
     report_frequency: int = dataclasses.field(default=10)
@@ -46,13 +53,13 @@ class Process:
     __lock = threading.Lock()
 
     @staticmethod
-    def _default_stream_callback(tag: str, line: str, is_err: bool, usage_summary: UsageSummary) -> bool:
+    def _default_stream_callback(tag: Tag, line: str, is_err: bool, usage_summary: UsageSummary) -> bool:
         print(f"{tag}[{'e' if is_err else 'o'}{usage_summary.real:12.3f}]", line if line[-1] != '\n' else line[:-1],
               file=sys.stderr)
         return False
 
     @staticmethod
-    def _default_report_callback(tag: str, usage_summary: UsageSummary) -> bool:
+    def _default_report_callback(tag: Tag, usage_summary: UsageSummary) -> bool:
         print(
             f"[{tag}] "
             f"time: {usage_summary.real:10.1f} {usage_summary.time:10.1f}; "

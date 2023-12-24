@@ -12,13 +12,13 @@ MAX_LIMIT = 10**100
 @typeguard.typechecked
 @dataclasses.dataclass(frozen=True)
 class Limit:
-    realtime: int = dataclasses.field(default=MAX_LIMIT)
+    real: int = dataclasses.field(default=MAX_LIMIT)
     time: int = dataclasses.field(default=MAX_LIMIT)
     memory: int = dataclasses.field(default=MAX_LIMIT)
     swap: int = dataclasses.field(default=0)
 
     def __post_init__(self):
-        validate("realtime", self.realtime, min_value=0, max_value=MAX_LIMIT)
+        validate("realtime", self.real, min_value=0, max_value=MAX_LIMIT)
         validate("time", self.time, min_value=0, max_value=MAX_LIMIT)
         validate("memory", self.memory, min_value=0, max_value=MAX_LIMIT)
         validate("swap", self.swap, min_value=0, max_value=MAX_LIMIT)
@@ -92,7 +92,7 @@ class UsageSummary:
         return self.__status != "running"
 
     def __exceed_limit(self, limit: Limit) -> bool:
-        if self.real > limit.realtime:
+        if self.real > limit.real:
             self.terminate("out of time (real)", key=self.__key)
         elif self.time > limit.time:
             self.terminate("out of time", key=self.__key)
@@ -121,7 +121,7 @@ class UsageSummary:
         self.__real = time.time() - self.__start
         self.__max_memory = max(self.__max_memory, self.memory)
 
-        if self.__exceed_limit(limit) or self.real > self.__last_report + report_frequency:
+        if self.__exceed_limit(limit) or self.real >= self.__last_report + report_frequency:
             self.__last_report = self.real
             return True
         return False
