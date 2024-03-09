@@ -1,8 +1,12 @@
+from pathlib import Path
+
+import typer
 from dumbo_asp.primitives.models import Model
 from dumbo_asp.primitives.programs import SymbolicProgram
 from dumbo_asp.queries import explanation_graph, pack_xasp_navigator_url
 from dumbo_utils.console import console
 
+from dumbo_runlim import utils
 from dumbo_runlim.utils import run_experiment
 
 programs = {
@@ -175,7 +179,12 @@ def iclp_2024_teardown(result):
     return links, assumptions, url
 
 
-def iclp_2024() -> None:
+def iclp_2024(
+        output_file: Path = typer.Option(
+            "output.csv", "--output-file", "-o",
+            help="File to store final results",
+        ),
+) -> None:
     answer_sets = {key: Model.of_program(program) for key, program in programs.items()}
     queries = {key: answer_set.filter(lambda atom: atom.predicate_name == "assign")
                for key, answer_set in answer_sets.items()}
@@ -185,6 +194,14 @@ def iclp_2024() -> None:
     def on_complete_task(task_id, resources, result):
         console.log(f"Task {task_id}: {resources}, links={result[0]}, assumptions={result[1]}")
         res[task_id] = (resources, result)
+
+    def on_all_done():
+        with open(output_file, "w") as file:
+            file.write(f"task_id\treal_time\ttime\tmemory\tlinks\tassumptions\turl\n")
+            for task_id, (resources, result) in res.items():
+                links, assumptions, url = result
+                file.write(f"{task_id}\t{resources.real_time_usage}\t{resources.time_usage}\t{resources.memory_usage}\t{links}\t{assumptions}\t{url}\n")
+        utils.on_all_done()
 
     run_experiment(
         *(
@@ -201,5 +218,5 @@ def iclp_2024() -> None:
             } for key in queries.keys() for query in queries[key]
         ),
         on_complete_task=on_complete_task,
+        on_all_done=on_all_done,
     )
-    console.log(len(res))

@@ -167,18 +167,18 @@ def experiment_task(
         return shared_list[0]
 
 
-def __on_complete_task(task_id, resources, result):
+def on_complete_task(task_id, resources, result):
     console.log(f"Task {task_id}: {resources}, {result}")
 
 
-def __on_all_done():
+def on_all_done():
     console.log("[bold red]All done![/bold red]")
 
 
 def run_experiment(
         *tasks: dict,
-        on_complete_task: Callable = __on_complete_task,
-        on_all_done: Callable = __on_all_done,
+        on_complete_task: Callable = on_complete_task,
+        on_all_done: Callable = on_all_done,
 ):
     with concurrent.futures.ProcessPoolExecutor(max_workers=AppOptions.instance().workers) as executor:
         futures = [executor.submit(experiment_task, **task) for task in tasks]
