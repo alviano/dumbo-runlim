@@ -175,7 +175,7 @@ def iclp_2024_measure_ucore(program, answer_set, query):
 def iclp_2024_teardown_ucore(query, result):
     graph = result
     links = len(graph.filter(lambda atom: atom.predicate_name == "link"))
-    assumptions = graph.as_facts.count("(assumption,")
+    assumptions = graph.as_facts.count("(assumption,") - 1  # the node "None" is always flagged as assumption
     url = pack_xasp_navigator_url(graph, as_forest_with_roots=Model.of_atoms(query), with_chopped_body=True, with_backward_search=True,
                                   backward_search_symbols=(';', ' :-'))
     return links, assumptions, url
