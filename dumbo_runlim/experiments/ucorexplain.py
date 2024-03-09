@@ -5,6 +5,8 @@ from dumbo_asp.primitives.models import Model
 from dumbo_asp.primitives.programs import SymbolicProgram
 from dumbo_asp.queries import explanation_graph, pack_xasp_navigator_url
 from dumbo_utils.console import console
+from dumbo_utils.url import compress_object_for_url
+from xasp.entities import Explain
 
 from dumbo_runlim import utils
 from dumbo_runlim.utils import run_experiment
@@ -163,19 +165,38 @@ block((sub, Row', Col'), (Row, Col)) :- Row = 1..9; Col = 1..9; Row' = (Row-1) /
 }
 
 
-def iclp_2024_measure(program, answer_set, query):
+def iclp_2024_measure_ucore(program, answer_set, query):
     the_program = SymbolicProgram.parse(program)  # just to be fair, let's recompute everything at each iteration
     herbrand_base = the_program.herbrand_base
     graph = explanation_graph(the_program, answer_set, herbrand_base, Model.of_atoms(query))
     return graph
 
 
-def iclp_2024_teardown(result):
+def iclp_2024_teardown_ucore(query, result):
     graph = result
     links = len(graph.filter(lambda atom: atom.predicate_name == "link"))
     assumptions = graph.as_facts.count("(assumption,")
-    url = pack_xasp_navigator_url(graph, with_chopped_body=True, with_backward_search=True,
+    url = pack_xasp_navigator_url(graph, as_forest_with_roots=Model.of_atoms(query), with_chopped_body=True, with_backward_search=True,
                                   backward_search_symbols=(';', ' :-'))
+    return links, assumptions, url
+
+
+def iclp_2024_measure_xasp(program, answer_set, queries):
+    explain = Explain.the_program(
+        program,
+        the_answer_set=answer_set,
+        the_atoms_to_explain=Model.of_atoms(queries[0]),
+    )
+    graph = explain.explanation_dag()
+    return graph, explain
+
+
+def iclp_2024_teardown_xasp(result):
+    graph, explain = result
+    links = len(graph.filter(lambda atom: atom.predicate_name == "link"))
+    assumptions = len(explain.minimal_assumption_set())
+    explain.compute_igraph()
+    url = "https://xasp-navigator.netlify.app/#" + compress_object_for_url(explain.navigator_graph())
     return links, assumptions, url
 
 
@@ -207,15 +228,25 @@ def iclp_2024(
         *(
             {
                 "task_id": f"{key} {query}",
-                "measure": (iclp_2024_measure, {
+                "measure": (iclp_2024_measure_ucore, {
                     "program": programs[key],
                     "answer_set": answer_sets[key],
-                    "query": query if "xasp" not in key else Model.of_atoms(query, str(query).replace("assign", "assign'")),
+                    "query": query,
                 }),
-                "teardown": (iclp_2024_teardown, {
+                "teardown": (iclp_2024_teardown_ucore, {
+                    "query": query,
+                }),
+            } if "xasp" not in key else {
+                "task_id": f"{key} {query}",
+                "measure": (iclp_2024_measure_xasp, {
+                    "program": programs[key],
+                    "answer_set": answer_sets[key],
+                    "queries": Model.of_atoms(query, str(query).replace("assign", "assign'")),
+                }),
+                "teardown": (iclp_2024_teardown_xasp, {
+                }),
 
-                }),
-            } for key in queries.keys() for query in queries[key]
+            } for key in queries.keys() if "4x4" in key and "xasp" in key for query in queries[key]
         ),
         on_complete_task=on_complete_task,
         on_all_done=on_all_done,

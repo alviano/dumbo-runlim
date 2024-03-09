@@ -336,13 +336,13 @@ files = [
 
 [[package]]
 name = "dumbo-asp"
-version = "0.3.5"
+version = "0.3.6"
 description = "Utilities for Answer Set Programming"
 optional = false
 python-versions = ">=3.11,<4.0"
 files = [
-    {file = "dumbo_asp-0.3.5-py3-none-any.whl", hash = "sha256:8f36f34904cb42ea9a996605dfce90dbd429192fd76b6c242d7ead0d402f157a"},
-    {file = "dumbo_asp-0.3.5.tar.gz", hash = "sha256:603d5d9e0f018bab0e183805c09037d4c01ea54f08df86f6dd7efa3414ffa381"},
+    {file = "dumbo_asp-0.3.6-py3-none-any.whl", hash = "sha256:68cb6a94984bf5d754a23f94f291a6a084f04a47d5c019ebd92eaec4304d2791"},
+    {file = "dumbo_asp-0.3.6.tar.gz", hash = "sha256:4bcec0539546ff74d892cd496d6860a7fec9c2ee775f8e684c33ceebfe87a0dc"},
 ]
 
 [package.dependencies]
@@ -806,19 +806,19 @@ six = "*"
 
 [[package]]
 name = "xasp"
-version = "0.8.2"
+version = "0.8.3"
 description = "API for eXplainable Answer Set Programming"
 optional = false
 python-versions = ">=3.11,<4.0"
 files = [
-    {file = "xasp-0.8.2-py3-none-any.whl", hash = "sha256:165cc50246e8cc41da9a5495c1d11919794ebe61134e49f1382dd3096dd2dcd1"},
-    {file = "xasp-0.8.2.tar.gz", hash = "sha256:161838876ba90c7c82fbf1ced5ae4fa9e63b5cdd4ce389f592af37e914f2a555"},
+    {file = "xasp-0.8.3-py3-none-any.whl", hash = "sha256:663c3d2e2faddaab708a14d9b7cb149bf15c35e992b9bef989c97233a982c6db"},
+    {file = "xasp-0.8.3.tar.gz", hash = "sha256:c48824c5590541adefe00d0fc54f45a7ac391af74c9b8fbaa2958e9b0988eb7b"},
 ]
 
 [package.dependencies]
-dumbo-asp = "0.3.5"
+dumbo-asp = "0.3.6"
 
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "edf681c5429c28085a9dee13e8579f92d973d0248f0e5fd6ae35f9603ae0d653"
+content-hash = "0a244743edcff1d01e34ad3e0fee8cdffa27c392d76c0e4e6e4d8ae4cd753619"
