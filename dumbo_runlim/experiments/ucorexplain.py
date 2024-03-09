@@ -185,7 +185,7 @@ def iclp_2024_measure_xasp(program, answer_set, queries):
     explain = Explain.the_program(
         program,
         the_answer_set=answer_set,
-        the_atoms_to_explain=Model.of_atoms(queries[0]),
+        the_atoms_to_explain=Model.of_atoms(queries),
     )
     graph = explain.explanation_dag()
     return graph, explain
