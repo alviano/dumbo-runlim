@@ -210,7 +210,7 @@ def iclp_2024(
                 "measure": (iclp_2024_measure, {
                     "program": programs[key],
                     "answer_set": answer_sets[key],
-                    "query": query,
+                    "query": query if "xasp" not in key else Model.of_atoms(query, str(query).replace("assign", "assign'")),
                 }),
                 "teardown": (iclp_2024_teardown, {
 
