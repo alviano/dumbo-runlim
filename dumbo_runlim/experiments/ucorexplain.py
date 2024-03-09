@@ -246,7 +246,7 @@ def iclp_2024(
                 "teardown": (iclp_2024_teardown_xasp, {
                 }),
 
-            } for key in queries.keys() if "4x4" in key and "xasp" in key for query in queries[key]
+            } for key in queries.keys() for query in queries[key]
         ),
         on_complete_task=on_complete_task,
         on_all_done=on_all_done,
