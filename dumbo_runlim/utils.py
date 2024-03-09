@@ -78,7 +78,7 @@ class ResourceUsage:
     @property
     def memory_usage(self) -> float:
         return self.__data["memory_usage"] if "end" in self.__data else\
-            resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024.0 / 1024.0
+            resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024.0
 
 
 # def run_on_subprocess(real_time_limit: Optional[int] = None):

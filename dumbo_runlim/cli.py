@@ -1,5 +1,6 @@
 import os
 import signal
+import time
 from typing import Optional
 
 import resource
@@ -18,6 +19,14 @@ def is_debug_on():
 
 def run_app():
     os.setpgrp()
+
+    def signal_handler(the_signal, frame):
+        os.killpg(0, signal.SIGINT)
+        time.sleep(1)
+        os.killpg(0, signal.SIGKILL)
+
+    signal.signal(signal.SIGINT, signal_handler)
+
     try:
         app()
     except Exception as e:
@@ -26,8 +35,6 @@ def run_app():
             raise e
         else:
             console.print(f"[red bold]Error:[/red bold] {e}")
-    finally:
-        os.killpg(0, signal.SIGKILL)
 
 
 def version_callback(value: bool):
