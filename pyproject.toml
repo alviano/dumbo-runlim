@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dumbo-runlim"
-version = "0.2.2"
+version = "0.2.3"
 description = "A CLI to run and limit processes (and their subprocesses)"
 authors = ["Mario Alviano <mario.alviano@gmail.com>"]
 readme = "README.md"
@@ -11,6 +11,7 @@ dumbo-utils = "^0.3.0"
 psutil = "^5.9.7"
 dumbo-asp = "^0.3.6"
 xasp = "^0.8.3"
+gitpython = "^3.1.42"
 
 
 [tool.poetry.dev-dependencies]

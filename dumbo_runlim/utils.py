@@ -13,6 +13,7 @@ import typer
 from dumbo_utils.console import console
 from dumbo_utils.primitives import PrivateKey
 from dumbo_utils.validation import validate
+from git import Repo, GitCommandError
 from rich.progress import Progress, TextColumn, BarColumn, TaskProgressColumn, TimeRemainingColumn
 
 
@@ -224,3 +225,13 @@ def external_command(command):
             raise e
         else:
             console.print(f"[red bold]Error:[/red bold] {e}")
+
+
+def git_pull(repository_url: str, local_path: str):
+    with console.status("[bold green]Cloning repository...[/bold green]"):
+        try:
+            repo = Repo.clone_from(repository_url, local_path)
+        except GitCommandError:
+            repo = Repo(local_path)
+    with console.status("[bold green]Pulling from git...[/bold green]"):
+        repo.remotes.origin.pull()
