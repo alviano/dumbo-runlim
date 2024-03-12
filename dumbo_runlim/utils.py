@@ -181,18 +181,18 @@ def experiment_task(
         return shared_list[0]
 
 
-def on_complete_task(task_id, resources, result):
+def on_complete_task_log(task_id, resources, result):
     console.log(f"Task {task_id}: {resources}, {result}")
 
 
-def on_all_done():
+def on_all_done_log():
     console.log("[bold red]All done![/bold red]")
 
 
 def run_experiment(
         *tasks: dict,
-        on_complete_task: Callable = on_complete_task,
-        on_all_done: Callable = on_all_done,
+        on_complete_task: Callable = on_complete_task_log,
+        on_all_done: Callable = on_all_done_log,
 ):
     with concurrent.futures.ProcessPoolExecutor(max_workers=AppOptions.instance().workers) as executor:
         futures = [executor.submit(experiment_task, **task) for task in tasks]
@@ -213,7 +213,11 @@ def run_experiment(
 
 
 def run_external_command(directory, args):
-    subprocess.Popen(args, cwd=directory, stdin=subprocess.PIPE).communicate(pickle.dumps(AppOptions.instance()))
+    output, error = subprocess.Popen(
+        args, cwd=directory, stdin=subprocess.PIPE, stderr=subprocess.PIPE
+    ).communicate(pickle.dumps(AppOptions.instance()))
+    if error:
+        console.log(error, color="red")
 
 
 def external_command(command):
@@ -228,10 +232,19 @@ def external_command(command):
 
 
 def git_pull(repository_url: str, local_path: str):
-    with console.status("[bold green]Cloning repository...[/bold green]"):
+    with console.status(f"[bold green]Cloning repository {repository_url} in {local_path} ...[/bold green]"):
         try:
             repo = Repo.clone_from(repository_url, local_path)
         except GitCommandError:
             repo = Repo(local_path)
-    with console.status("[bold green]Pulling from git...[/bold green]"):
+    with console.status(f"[bold green]Pulling from git {repository_url} in {local_path} ...[/bold green]"):
         repo.remotes.origin.pull()
+
+
+def poetry_update(local_path: str, no_cache: bool = False):
+    console.log("[bold green]Updating dependencies...[/bold green]")
+    args = ["poetry", "-C", local_path, "update"]
+    if no_cache:
+        args.append("--no-cache")
+    subprocess.Popen(args).communicate()
+    console.log("[bold green]Dependencies updated![/bold green]")

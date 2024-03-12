@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dumbo-runlim"
-version = "0.2.3"
+version = "0.2.4"
 description = "A CLI to run and limit processes (and their subprocesses)"
 authors = ["Mario Alviano <mario.alviano@gmail.com>"]
 readme = "README.md"

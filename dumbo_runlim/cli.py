@@ -17,9 +17,11 @@ def run_app():
     os.setpgrp()
 
     def signal_handler(the_signal, frame):
-        os.killpg(0, signal.SIGINT)
-        time.sleep(1)
-        os.killpg(0, signal.SIGKILL)
+        console.log(f"[bold red]Received signal {the_signal}[/bold red]")
+        with console.status("[bold red]Terminating...[/bold red]"):
+            os.killpg(0, signal.SIGINT)
+            time.sleep(1)
+            os.killpg(0, signal.SIGKILL)
 
     signal.signal(signal.SIGINT, signal_handler)
 
