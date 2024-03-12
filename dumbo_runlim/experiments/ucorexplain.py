@@ -18,5 +18,5 @@ def command(
     # git pull...
     run_external_command("../dumbo-runlim-ucorexplain", [
         "poetry", "run", "python", "-m", "ucorexplain",
-        "-o", output_file,
+        "-o", output_file.absolute(),
     ])
