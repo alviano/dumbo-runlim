@@ -1,11 +1,15 @@
 import concurrent.futures
 import dataclasses
+import pickle
+import resource
+import subprocess
+import sys
 import time
 from dataclasses import InitVar
 from multiprocessing import Manager, Process
 from typing import Callable, Optional
 
-import resource
+import typer
 from dumbo_utils.console import console
 from dumbo_utils.primitives import PrivateKey
 from dumbo_utils.validation import validate
@@ -36,6 +40,15 @@ class AppOptions:
     def set(**kwargs):
         validate("once", AppOptions.__instance is None, equals=True)
         AppOptions.__instance = AppOptions(key=AppOptions.__key, **kwargs)
+
+    @staticmethod
+    def pickle():
+        validate("once", AppOptions.__instance is None, equals=True)
+        AppOptions.__instance = pickle.loads(sys.stdin.buffer.read())
+
+
+def is_debug_on():
+    return AppOptions.instance().debug
 
 
 @dataclasses.dataclass(frozen=True)
@@ -197,3 +210,17 @@ def run_experiment(
                 progress.update(task, advance=1)
     on_all_done()
 
+
+def run_external_command(directory, args):
+    subprocess.Popen(args, cwd=directory, stdin=subprocess.PIPE).communicate(pickle.dumps(AppOptions.instance()))
+
+
+def external_command(command):
+    try:
+        AppOptions.pickle()
+        typer.run(command)
+    except Exception as e:
+        if is_debug_on():
+            raise e
+        else:
+            console.print(f"[red bold]Error:[/red bold] {e}")

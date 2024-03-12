@@ -1,20 +1,16 @@
 import os
+import resource
 import signal
 import time
 from typing import Optional
 
-import resource
 import typer
 from dumbo_utils.console import console
 
-from dumbo_runlim.experiments import ucorexplain, example
-from dumbo_runlim.utils import AppOptions
+from dumbo_runlim.experiments import example, ucorexplain
+from dumbo_runlim.utils import AppOptions, is_debug_on
 
 app = typer.Typer()
-
-
-def is_debug_on():
-    return AppOptions.instance().debug
 
 
 def run_app():
@@ -40,8 +36,8 @@ def run_app():
 def version_callback(value: bool):
     if value:
         import importlib.metadata
-        __version__ = importlib.metadata.version("dumbo-run-lim")
-        console.print("asp-chef-cli", __version__)
+        __version__ = importlib.metadata.version("dumbo-runlim")
+        console.print("dumbo-runlim", __version__)
         raise typer.Exit()
 
 
@@ -79,5 +75,5 @@ def main(
     )
 
 
-app.command(name="example-command")(example.command)
-app.command(name="ucorexplain-iclp-2024")(ucorexplain.iclp_2024)
+app.command(name="example")(example.command)
+app.command(name="ucorexplain")(ucorexplain.command)
