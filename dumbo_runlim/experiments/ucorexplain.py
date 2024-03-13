@@ -28,6 +28,6 @@ def command(
         git_pull(f"git@github.com:alviano/{module}.git", path)
         poetry_update(path, no_cache)
     run_external_command(path, [
-        "poetry", "run", "python", "-m", module,
+        "poetry", "run", "python", "-m", module.replace('-', '_'),
         "-o", output_file.absolute(),
     ])
