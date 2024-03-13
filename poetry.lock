@@ -127,13 +127,13 @@ files = [
 
 [[package]]
 name = "dumbo-utils"
-version = "0.3.1"
+version = "0.3.2"
 description = "Different utilities to be reused in other projects"
 optional = false
 python-versions = ">=3.11,<4.0"
 files = [
-    {file = "dumbo_utils-0.3.1-py3-none-any.whl", hash = "sha256:1f1c77fbe134f3454540820909f9c78d2774b7211a2e3b88c31c0b9878a92943"},
-    {file = "dumbo_utils-0.3.1.tar.gz", hash = "sha256:984272b77075fbf9ecf9b5bce16e6b0380152628d00f8ef468bd20fde6fd6d38"},
+    {file = "dumbo_utils-0.3.2-py3-none-any.whl", hash = "sha256:c21356128a6ee817a495fff373afb6d722bf08e9496daa652f5df9a313e5d92d"},
+    {file = "dumbo_utils-0.3.2.tar.gz", hash = "sha256:151455c43d2535152c87e15c26c41e8cc511d374891cd0b323f1dd1ee7aac61d"},
 ]
 
 [package.dependencies]
@@ -430,4 +430,4 @@ six = "*"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "13a4832e373c7708d7c93bdfbe189ba4069df8a282c6929de049cca6e22558d2"
+content-hash = "c1095c05b04991c44565744966b93f1e7867a17fa8a076569019b97573a2a93e"
