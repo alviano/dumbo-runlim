@@ -7,7 +7,7 @@ from typing import Optional
 import typer
 from dumbo_utils.console import console
 
-from dumbo_runlim.experiments import example, ucorexplain
+from dumbo_runlim.experiments import example, ucorexplain, xasp
 from dumbo_runlim.utils import AppOptions, is_debug_on
 
 app = typer.Typer()
@@ -79,3 +79,4 @@ def main(
 
 app.command(name="example")(example.command)
 app.command(name="ucorexplain")(ucorexplain.command)
+app.command(name="xasp")(xasp.command)
